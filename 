@@ -1,0 +1,49 @@
+import os
+import cv2
+import random
+
+
+
+def randomcrop(im_path,num,sub_train_root):
+
+	image = cv2.imread(im_path)
+
+	h,w,d = image.shape
+
+	for i in xrange(num):
+		xmin = int(random.uniform(0,int(0.75*w)))
+
+		ymin = int(random.uniform(0, int(0.75*h) ) )
+
+		#cw = int(random.uniform(int(0.25*(w-xmin)),w-xmin))
+
+		#ch = int(random.uniform(int(0.25*(h-ymin)),h-ymin))
+		
+		size = min(h-ymin,w-xmin)		
+		crop=image[ymin:ymin+size,xmin:xmin+size]
+
+		cropname = os.path.splitext( os.path.basename(im_path) )[0]+"_"+str(i)+".jpg"
+
+		croppath = os.path.join(sub_train_root,cropname)
+		
+		cv2.imwrite(croppath,crop)
+
+
+
+def main():
+
+	im_root = '/opt/henry/model_generator/MorpxData/VOC2007plus/clsImages'
+	for im in os.listdir(im_root):
+		if im.startswith('00'):			
+			im_path = os.path.join( im_root,im  )
+
+			num = random.randrange(2,6)
+
+			sub_train_root = '/opt/henry/model_generator/MorpxData/classification/hands/VOC2007'
+
+			randomcrop(im_path,num,sub_train_root)
+
+
+if __name__ == '__main__':
+	main()
+		
